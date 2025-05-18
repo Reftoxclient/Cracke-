@@ -4,19 +4,16 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Cracke!</title>
+
+  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com "></script>
+
+  <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Inter :wght@400;600&display=swap" rel="stylesheet">
+
   <style>
     body {
       font-family: 'Inter', sans-serif;
-      opacity: 0;
-      transform: translateY(-20px);
-      transition: all 1s ease-out;
-    }
-
-    body.loaded {
-      opacity: 1;
-      transform: translateY(0);
     }
 
     /* Кнопка Telegram с глитч-эффектом */
@@ -37,8 +34,6 @@
       text-align: center;
       cursor: pointer;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-      animation: fadeInUp 1s ease-out forwards;
-      overflow: hidden;
       transition: transform 0.3s ease;
     }
 
@@ -97,7 +92,7 @@
 
   <!-- Hero -->
   <section class="bg-indigo-600 text-white p-10 text-center rounded-b-xl shadow-lg">
-    <h2 class="text-5xl font-extrabold mb-3 animate-pulse">Sveicināts lappusē Cracke!</h2>
+    <h2 class="text-5xl font-extrabold mb-3">Sveicināts lappusē Cracke!</h2>
     <p class="text-xl">Kopiena par visu — no diskusijām līdz preču pirkšanai.</p>
   </section>
 
@@ -105,20 +100,17 @@
   <main class="max-w-4xl mx-auto my-10 px-4 space-y-10">
 
     <!-- Search Tab -->
-    <div id="search" class="hidden">
+    <div id="search">
       <h3 class="text-xl font-semibold mb-4">Meklēt</h3>
       <input type="text" id="searchInput" placeholder="Ievadi atslēgvārdu..." 
              class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 transition" />
-      <div id="searchResults" class="mt-4 space-y-3">
-        <!-- Результаты поиска будут здесь -->
-      </div>
+      <div id="searchResults" class="mt-4 space-y-3"></div>
     </div>
 
     <!-- Forum Tab -->
     <div id="forum" class="hidden">
       <h3 class="text-xl font-semibold mb-4">Foruma Diskusija</h3>
 
-      <!-- Form to add post -->
       <form id="postForm" class="mb-6 space-y-3">
         <input type="text" id="postTitle" placeholder="Tema" required
                class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400" />
@@ -130,17 +122,13 @@
         </button>
       </form>
 
-      <!-- Posts list -->
-      <div id="posts" class="space-y-4">
-        <!-- Posts будут динамически добавлены сюда -->
-      </div>
+      <div id="posts" class="space-y-4"></div>
     </div>
 
     <!-- Marketplace Tab -->
     <div id="marketplace" class="hidden">
       <h3 class="text-xl font-semibold mb-4">Tirgus</h3>
 
-      <!-- Form to add product -->
       <form id="productForm" class="mb-6 space-y-3">
         <input type="text" id="productName" placeholder="Preces nosaukums" required
                class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400" />
@@ -154,10 +142,7 @@
         </button>
       </form>
 
-      <!-- Products grid -->
-      <div id="products" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <!-- Товары будут динамически добавлены сюда -->
-      </div>
+      <div id="products" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
     </div>
 
   </main>
@@ -177,8 +162,9 @@
 
   <!-- Main Script -->
   <script>
+    // Подключение к Supabase
     const supabaseUrl = 'https://xnususoqjrxhwxvywfji.supabase.co ';
-    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'; // Замени на свой
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.xxxxx'; // Замени на свой ключ
     const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
     let currentTab = 'search';
@@ -190,8 +176,13 @@
     }
 
     async function loadData() {
+      console.log("Загрузка данных...");
+
       const { data: posts } = await supabase.from('posts').select('*');
       const { data: products } = await supabase.from('products').select('*');
+
+      console.log("Посты:", posts);
+      console.log("Продукты:", products);
 
       if (currentTab === 'forum') {
         document.getElementById('posts').innerHTML = '';
@@ -225,6 +216,7 @@
       }
     }
 
+    // Форма добавления поста
     document.getElementById('postForm').addEventListener('submit', async function(e) {
       e.preventDefault();
       const title = document.getElementById('postTitle').value.trim();
@@ -237,6 +229,7 @@
       if (currentTab === 'forum') await loadData();
     });
 
+    // Форма добавления товара
     document.getElementById('productForm').addEventListener('submit', async function(e) {
       e.preventDefault();
       const name = document.getElementById('productName').value.trim();
@@ -250,6 +243,7 @@
       if (currentTab === 'marketplace') await loadData();
     });
 
+    // Поиск
     document.getElementById('searchInput').addEventListener('input', async function() {
       const q = this.value.toLowerCase();
       const results = [];
@@ -297,7 +291,7 @@
     }
 
     window.addEventListener('load', () => {
-      document.body.classList.add('loaded'); // Активируем анимацию появления
+      console.log("Страница загружена");
       showTab('search');
       setInterval(loadData, 5000); // Обновление раз в 5 секунд
     });
