@@ -9,6 +9,77 @@
   <style>
     body {
       font-family: 'Inter', sans-serif;
+      opacity: 0;
+      transform: translateY(-20px);
+      transition: all 1s ease-out;
+    }
+
+    body.loaded {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Кнопка Telegram с глитч-эффектом */
+    .telegram-button {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      z-index: 50;
+      display: inline-block;
+      padding: 12px 24px;
+      background-color: #2AABEE;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      text-decoration: none;
+      text-align: center;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      animation: fadeInUp 1s ease-out forwards;
+      overflow: hidden;
+      transition: transform 0.3s ease;
+    }
+
+    .telegram-button:hover {
+      transform: scale(1.05);
+    }
+
+    .telegram-button::before,
+    .telegram-button::after {
+      content: attr(data-text);
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      background-color: #2AABEE;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      z-index: -1;
+      transition: transform 0.3s ease;
+    }
+
+    .telegram-button::before {
+      background-color: #1E90FF;
+      transform: translate(2px, -2px);
+    }
+
+    .telegram-button::after {
+      background-color: #00BFFF;
+      transform: translate(-2px, 2px);
+    }
+
+    .telegram-button:hover::before {
+      transform: translate(-5px, 5px);
+    }
+
+    .telegram-button:hover::after {
+      transform: translate(5px, -5px);
     }
   </style>
 </head>
@@ -96,6 +167,11 @@
     &copy; 2025 Cracke! Visas tiesības aizsargātas.
   </footer>
 
+  <!-- Telegram Button -->
+  <a href="http://t.me/Crackered3Bot" target="_blank" class="telegram-button" data-text="Telegram Bot">
+    🤖 Telegram Bot
+  </a>
+
   <!-- Supabase SDK -->
   <script src="https://cdn.jsdelivr.net/npm/ @supabase/supabase-js@2"></script>
 
@@ -113,7 +189,6 @@
       currentTab = tabId;
     }
 
-    // Load data
     async function loadData() {
       const { data: posts } = await supabase.from('posts').select('*');
       const { data: products } = await supabase.from('products').select('*');
@@ -150,7 +225,6 @@
       }
     }
 
-    // Add Post
     document.getElementById('postForm').addEventListener('submit', async function(e) {
       e.preventDefault();
       const title = document.getElementById('postTitle').value.trim();
@@ -163,7 +237,6 @@
       if (currentTab === 'forum') await loadData();
     });
 
-    // Add Product
     document.getElementById('productForm').addEventListener('submit', async function(e) {
       e.preventDefault();
       const name = document.getElementById('productName').value.trim();
@@ -177,7 +250,6 @@
       if (currentTab === 'marketplace') await loadData();
     });
 
-    // Search
     document.getElementById('searchInput').addEventListener('input', async function() {
       const q = this.value.toLowerCase();
       const results = [];
@@ -225,6 +297,7 @@
     }
 
     window.addEventListener('load', () => {
+      document.body.classList.add('loaded'); // Активируем анимацию появления
       showTab('search');
       setInterval(loadData, 5000); // Обновление раз в 5 секунд
     });
